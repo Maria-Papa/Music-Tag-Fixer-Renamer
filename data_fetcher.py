@@ -26,10 +26,15 @@ def get_access_token():
 
     # Getting an Access Token
     auth_response      = requests.post(auth_url, data=data)
+    status_code        = auth_response.status_code
     auth_response_data = auth_response.json()
-    access_token       = auth_response_data.get("access_token")
 
-    return access_token
+    if status_code == 200:
+        access_token = auth_response_data.get("access_token")
+        return access_token
+    else:
+        print(auth_response_data["error_description"])
+        return 0
 
 def get_headers():
     access_token = get_access_token()
@@ -83,6 +88,9 @@ def build_results(search):
 
 ############################# CODE ##############################
 search  = search_for_track(search_url, "Toto", "Africa")
-results = build_results(search)
 
-pprint(results)
+if "error" in search:
+    pprint(search["error"]["message"])
+else:
+    results = build_results(search)
+    pprint(results)
