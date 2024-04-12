@@ -1,6 +1,5 @@
-from asyncore import close_all
 import tkinter as tk
-from cli import start
+from cli import CLI
 from variables import black, green
 from tkinter import BooleanVar, Scrollbar, StringVar, ttk, DISABLED, END, NORMAL, VERTICAL, NSEW, NS, EW, E
 
@@ -13,6 +12,8 @@ class GUI(tk.Tk):
         self._center_window()
         self._create_grid("20 20 20 20")
         self._create_widgets()
+
+        self.cli = CLI()
 
     def _center_window(self, per_of_screen_w=40, per_of_screen_h=60):
         # Get the screen dimension
@@ -41,13 +42,13 @@ class GUI(tk.Tk):
         self.main_frame.rowconfigure(1, weight=2)
         
     def _start_get_meta(self):
-        start(self, "get_meta")
+        self.cli.start(self, "get_meta")
         
     def _start_fix_meta(self):
-        start(self, "fix_meta")
+        self.cli.start(self, "fix_meta")
 
     def _start_rename(self):
-        start(self, "rename")
+        self.cli.start(self, "rename")
 
     def _create_widgets(self):
         # ROW 0 - PATH LABEL
