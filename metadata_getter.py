@@ -17,27 +17,54 @@ class METADATA_GETTER:
         self.api = API(client_id, client_secret)
         self.gui = gui
 
-    def result(self):
-        search = self.api.search_for_track(search_url, "Toto", "Africa")
+        self.metadata = []
+
+    def _handle_mp3(self, track):
+        # Artist
+        if ("TPE1" in track.keys()):
+            artist = str(track.get("TPE1"))
+        # Track Title
+        if ("TIT2" in track.keys()):
+            title = str(track.get("TIT2"))
+
+        return (artist, title)
+
+    def _handle_flac(self, track):
+        # Artist
+        if ("artist" in track.keys()):
+            artist = str(track.get("artist")[0])
+        # Track Title
+        if ("title" in track.keys()):
+            title = str(track.get("title")[0])
+
+        return (artist, title)
+
+    def _search_meta(self, artist, title):
+        search = self.api.search_for_track(search_url, artist, title)
 
         if "error" in search:
             pprint(search["error"]["message"])
         else:
             results = self.api.map_results(search)
-            pprint(results)
+            # pprint(results)
+            self.metadata.append(results)
 
     def main(self, file_meta):
         for meta in file_meta:
-            file_name   = meta["file_name"]
+            # file_name   = meta["file_name"]
             file_type   = meta["file_type"]
             file_path   = meta["file_path"]
-            folder_path = meta["folder_path"]
+            # folder_path = meta["folder_path"]
    
             if file_type == mutagen.mp3.MP3:
                 track = MP3(file_path)
-                # self._handle_mp3(folder_path, track, file_name)
+                res   = self._handle_mp3(track)
             elif file_type == mutagen.flac.FLAC:
                 track = FLAC(file_path)
-                # self._handle_flac(folder_path, track, file_name)
+                res   = self._handle_flac(track)
             else:
                 self.gui.set_output_value(f"File type {file_type} is not supported yet...\n", green)
+
+            self._search_meta(res[0], res[1])
+
+        self.gui.set_output_value(self.metadata)

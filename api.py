@@ -24,9 +24,11 @@ class API:
 
         if status_code == 200:
             access_token = auth_response_data.get("access_token")
+            
             return access_token
         else:
             print(auth_response_data["error_description"])
+
             return 0
 
     def _get_headers(self):
@@ -36,6 +38,7 @@ class API:
             "Authorization": "Bearer {token}".format(token=access_token),
             "Content-Type" : "application/json"
         }
+
         return headers
 
     def _build_params(self, artist, track):
@@ -56,7 +59,7 @@ class API:
             "limit" : 1,
             "offset": 0
         }
-        print(type(params))
+
         return params
 
     def search_for_track(self, search_url, artist, track):

@@ -46,11 +46,9 @@ class CLI:
         subdir = gui.get_subdir_value()
 
         if self.check_path(gui, path) is True:
-            gui.set_output_value(separator, green)
             self.list_dir_and_handle(gui, path, subdir)
 
             if start_type == "get_meta":
-                print(len(self.file_meta))
                 self.get_metadata(gui, self.file_meta)
 
             if start_type == "fix_meta":
