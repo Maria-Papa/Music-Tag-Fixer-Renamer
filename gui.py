@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import BooleanVar, StringVar, ttk, DISABLED, END, NORMAL, NS, N, W, E, S
-from test_funcs import start
+from tkinter import SE, VERTICAL, BooleanVar, Scrollbar, StringVar, ttk, DISABLED, END, NORMAL, NS, N, W, E, S
+from cli import start
 
 class GUI(tk.Tk):
     def __init__(self):
@@ -32,8 +32,15 @@ class GUI(tk.Tk):
         mf.grid(column=0, row=0, sticky=(N, W, E, S))
         return mf
     
+    def _configure_grid(self):
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=3)
+        
     def _start(self):
-        # self.show_output()
         start(self)
 
     def _create_widgets(self):
@@ -61,26 +68,22 @@ class GUI(tk.Tk):
         # self.output_text = ttk.Entry(self.main_frame, width=80, state=DISABLED)
         self.output_text.grid(row=2, column=0, columnspan=3, rowspan=3, sticky=NS, pady=5)
 
-    def _configure_grid(self):
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=1)
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=1)
-        self.rowconfigure(2, weight=3)
-
-    # def show_output(self):
-    #     self.output_text.configure(state=NORMAL)
-
-    #     self.output_text.insert(END, self.subdir.get())
-
-    #     self.output_text.configure(state=DISABLED)
+        # SCROLLBAR
+        self.scroll = Scrollbar(self.main_frame, orient=VERTICAL, command=self.output_text.yview)
+        self.scroll.grid(row=2, column=0, columnspan=3, rowspan=3, sticky=(NS, E), pady=5)
 
     def get_subdir_value(self):
         return self.subdir.get()
     
-    def set_output_value(self, output_value):
-        self.output_text.configure(state=NORMAL)
+    def get_path_value(self):
+        return self.path.get()
+    
+    def set_output_value(self, output_value, fg, delete=False):
+        self.output_text.configure(state=NORMAL, fg=fg)
+
+        if delete is True:
+            self.output_text.delete("1.0", END)
+
         self.output_text.insert(END, output_value)
         self.output_text.configure(state=DISABLED)
 
