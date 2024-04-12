@@ -36,10 +36,14 @@ class GUI(tk.Tk):
     
     def _configure_grid(self):
         self.main_frame.columnconfigure(1, weight=1)
+        self.main_frame.columnconfigure(3, weight=4)
         self.main_frame.rowconfigure(1, weight=2)
         
-    def _start(self):
-        start(self)
+    def _start_fix(self):
+        start(self, "fix")
+
+    def _start_rename(self):
+        start(self, "rename")
 
     def _create_widgets(self):
         # ROW 0 - PATH LABEL
@@ -54,22 +58,32 @@ class GUI(tk.Tk):
         # ROW 0 - SUBDIR CHECKBUTTON
         self.subdir              = BooleanVar()
         self.sub_dir_ckeckbutton = ttk.Checkbutton(self.main_frame, text="Include Subdirectories", name="sub_dir", variable=self.subdir, onvalue=1, offvalue=0, state=NORMAL)
-        self.sub_dir_ckeckbutton.grid(row=0, column=2)
+        self.sub_dir_ckeckbutton.grid(row=0, column=3, sticky=E)
 
         # ROW 1 - OUTPUT TEXT
         self.output      = StringVar()
         self.output_text = tk.Text(self.main_frame, state=DISABLED)
-        self.output_text.grid(row=1, column=0, columnspan=3, sticky=NSEW, pady=20)
+        self.output_text.grid(row=1, column=0, columnspan=4, sticky=NSEW, pady=20)
 
         # ROW 1 - SCROLLBAR
         self.scroll = Scrollbar(self.main_frame, orient=VERTICAL, command=self.output_text.yview)
-        self.scroll.grid(row=1, column=0, columnspan=3, sticky=(NS, E), pady=20)
+        self.scroll.grid(row=1, column=0, columnspan=4, sticky=(NS, E), pady=20)
+
+        # # ROW 3 - START BUTTON
+        # style = ttk.Style()
+        # style.configure("TButton", font=("calibri", 16, "bold"), background=green, foreground=green)
+        # self.start_button = ttk.Button(self.main_frame, text="Start", command=self._start)
+        # self.start_button.grid(row=2, column=0, columnspan=3, sticky=EW)
 
         # ROW 3 - START BUTTON
         style = ttk.Style()
         style.configure("TButton", font=("calibri", 16, "bold"), background=green, foreground=green)
-        self.start_button = ttk.Button(self.main_frame, text="Start", command=self._start)
-        self.start_button.grid(row=2, column=0, columnspan=3, sticky=EW)
+
+        self.fix_meta_button = ttk.Button(self.main_frame, text="Fix Metadata", command=self._start_fix)
+        self.fix_meta_button.grid(row=2, column=0, columnspan=2, sticky=EW, padx="0 20")
+
+        self.rename_button = ttk.Button(self.main_frame, text="Rename", command=self._start_rename)
+        self.rename_button.grid(row=2, column=2, columnspan=2, sticky=EW)
 
     def get_subdir_value(self):
         return self.subdir.get()

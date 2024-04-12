@@ -3,10 +3,11 @@ import re
 import mutagen
 from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
+from variables import green
 
 class RENAMER:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, gui):
+        self.gui = gui
 
     def _lowercase_match(self, match):
         """Lowercase the whole regular expression match group."""
@@ -27,7 +28,7 @@ class RENAMER:
         current_file = path + "\\" + current_name
         new_file     = path + "\\" + new_name
 
-        print(f"Renaming '{current_name}' to '{new_name}'...")
+        self.gui.set_output_value(f"Renaming '{current_name}' to '{new_name}'...\n", green)
         os.rename(current_file, new_file)
 
     def _handle_mp3(self, path, track, file):
@@ -78,5 +79,4 @@ class RENAMER:
                     track = FLAC(file_path)
                     self._handle_flac(folder_path, track, file_name)
                 else:
-                    print(f"File type {type} is not supported yet...")
-
+                    self.gui.set_output_value(f"File type {file_type} is not supported yet...\n", green)
