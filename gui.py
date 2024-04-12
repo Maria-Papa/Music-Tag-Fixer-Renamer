@@ -1,9 +1,7 @@
 import tkinter as tk
-import tkinter.font as font
-from turtle import width
 from cli import start
 from variables import black, green
-from tkinter import LEFT, NE, NSEW, NW, SE, BooleanVar, Grid, Scrollbar, StringVar, ttk, DISABLED, END, NORMAL, VERTICAL, NS, N, W, E, S, EW
+from tkinter import BooleanVar, Scrollbar, StringVar, ttk, DISABLED, END, NORMAL, VERTICAL, NSEW, NS, EW, W, E
 
 class GUI(tk.Tk):
     def __init__(self):
