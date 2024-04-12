@@ -26,7 +26,7 @@ class METADATA_GETTER:
             results = self.api.map_results(search)
             pprint(results)
 
-    def main(self, file_meta, sub_dirs):
+    def main(self, file_meta):
         for meta in file_meta:
             file_name   = meta["file_name"]
             file_type   = meta["file_type"]
@@ -35,10 +35,9 @@ class METADATA_GETTER:
    
             if file_type == mutagen.mp3.MP3:
                 track = MP3(file_path)
-                self._handle_mp3(folder_path, track, file_name)
+                # self._handle_mp3(folder_path, track, file_name)
             elif file_type == mutagen.flac.FLAC:
                 track = FLAC(file_path)
-                self._handle_flac(folder_path, track, file_name)
+                # self._handle_flac(folder_path, track, file_name)
             else:
                 self.gui.set_output_value(f"File type {file_type} is not supported yet...\n", green)
-                

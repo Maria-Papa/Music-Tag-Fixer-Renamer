@@ -28,8 +28,9 @@ class RENAMER:
         current_file = path + "\\" + current_name
         new_file     = path + "\\" + new_name
 
-        self.gui.set_output_value(f"Renaming '{current_name}' to '{new_name}'...\n", green)
-        os.rename(current_file, new_file)
+        if current_name != new_name:
+            self.gui.set_output_value(f"Renaming '{current_name}' to '{new_name}'...\n", green)
+            os.rename(current_file, new_file)
 
     def _handle_mp3(self, path, track, file):
         # Artist
@@ -61,22 +62,18 @@ class RENAMER:
             new_name = artist + " - " + title + ".flac"
             self._rename(path, file, new_name)
 
-    def main(self, folder_path, sub_dirs):
-        for file_name in os.listdir(folder_path):
-            file_path = folder_path + "\\" + file_name
-
-            if os.path.isdir(file_path) and sub_dirs:
-                # Recursive Call
-                self.main(file_path, True)
-            elif os.path.isfile(file_path):
-                file      = mutagen.File(file_path)
-                file_type = type(file)
-
-                if file_type == mutagen.mp3.MP3:
-                    track = MP3(file_path)
-                    self._handle_mp3(folder_path, track, file_name)
-                elif file_type == mutagen.flac.FLAC:
-                    track = FLAC(file_path)
-                    self._handle_flac(folder_path, track, file_name)
-                else:
-                    self.gui.set_output_value(f"File type {file_type} is not supported yet...\n", green)
+    def main(self, file_meta):
+        for meta in file_meta:
+            file_name   = meta["file_name"]
+            file_type   = meta["file_type"]
+            file_path   = meta["file_path"]
+            folder_path = meta["folder_path"]
+   
+            if file_type == mutagen.mp3.MP3:
+                track = MP3(file_path)
+                self._handle_mp3(folder_path, track, file_name)
+            elif file_type == mutagen.flac.FLAC:
+                track = FLAC(file_path)
+                self._handle_flac(folder_path, track, file_name)
+            else:
+                self.gui.set_output_value(f"File type {file_type} is not supported yet...\n", green)
