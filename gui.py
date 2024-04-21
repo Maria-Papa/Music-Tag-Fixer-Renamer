@@ -1,16 +1,21 @@
 import tkinter as tk
+import tkinter.font as tkfont
 from cli import CLI
-from variables import black, green
-from tkinter import BooleanVar, Scrollbar, StringVar, ttk, DISABLED, END, NORMAL, VERTICAL, NSEW, NS, EW, E
+from variables import black
+from tkinter import NW, BooleanVar, PhotoImage, Scrollbar, StringVar, ttk, filedialog, DISABLED, END, NORMAL, VERTICAL, NSEW, NS, EW, E
 
 class GUI(tk.Tk):
     def __init__(self):
         super().__init__()
 
+        self.path   = StringVar()
+        self.subdir = BooleanVar()
+
         self.title("Music Track Fixer")
         self.resizable(False, False)
         self._center_window()
         self._create_grid("20 20 20 20")
+        self._configure_style()
         self._create_widgets()
 
         self.cli = CLI()
@@ -37,9 +42,23 @@ class GUI(tk.Tk):
         self._configure_grid()
     
     def _configure_grid(self):
-        self.main_frame.columnconfigure(1, weight=1)
+        self.main_frame.columnconfigure(2, weight=1)
         # self.main_frame.columnconfigure(3, weight=4)
         self.main_frame.rowconfigure(1, weight=2)
+
+    def _configure_style(self):
+        self.font  = tkfont.Font(family="Calibri", size=16)
+        self.style = ttk.Style()
+
+        # BUTTONS STYLE
+        self.style.configure("TButton", font=self.font)
+
+    def _browse_folder(self):
+        directory = filedialog.askdirectory()
+        if directory:
+            self.path_entry.state = NORMAL
+            self.path.set(directory)
+            self.path_entry.state = DISABLED
         
     def _start_get_meta(self):
         self.cli.start(self, "get_meta")
@@ -51,32 +70,32 @@ class GUI(tk.Tk):
         self.cli.start(self, "rename")
 
     def _create_widgets(self):
+        self._configure_style()
+
         # ROW 0 - PATH LABEL
         self.path_label = ttk.Label(self.main_frame, text="Music Files Location:")
         self.path_label.grid(row=0, column=0)
 
-        # ROW 0 - PATH ENTRY
-        self.path       = StringVar()
-        self.path_entry = ttk.Entry(self.main_frame, width=150, textvariable=self.path)
-        self.path_entry.grid(row=0, column=1, sticky=EW, padx=20)
+        # ROW 0 - BROWSE FOLDER BUTTON
+        self.folder_icon   = PhotoImage(file="icons/open-folder.png")
+        self.browse_button = ttk.Button(self.main_frame, image=self.folder_icon, command=self._browse_folder)
+        self.browse_button.grid(row=0, column=1, sticky=NW, padx="20 0")
+
+        # ROW 0 - SHOW SELECTED PATH
+        self.path_entry = ttk.Entry(self.main_frame, textvariable=self.path, font=self.font, state=DISABLED)
+        self.path_entry.grid(row=0, column=2, sticky=EW)
 
         # ROW 0 - SUBDIR CHECKBUTTON
-        self.subdir              = BooleanVar()
         self.sub_dir_ckeckbutton = ttk.Checkbutton(self.main_frame, text="Include Subdirectories", name="sub_dir", variable=self.subdir, onvalue=1, offvalue=0, state=NORMAL)
         self.sub_dir_ckeckbutton.grid(row=0, column=2, sticky=E)
 
         # ROW 1 - OUTPUT TEXT
-        self.output      = StringVar()
         self.output_text = tk.Text(self.main_frame, state=DISABLED)
         self.output_text.grid(row=1, column=0, columnspan=4, sticky=NSEW, pady=20)
 
         # ROW 1 - SCROLLBAR
         self.scroll = Scrollbar(self.main_frame, orient=VERTICAL, command=self.output_text.yview)
         self.scroll.grid(row=1, column=0, columnspan=4, sticky=(NS, E), pady=20)
-
-        # BUTTONS STYLE
-        style = ttk.Style()
-        style.configure("TButton", font=("calibri", 16, "bold"), background=green, foreground=green)
 
         # ROW 2 - BUTTON GET META
         self.get_meta_button = ttk.Button(self.main_frame, text="Get Metadata", command=self._start_get_meta)
