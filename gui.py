@@ -1,7 +1,10 @@
+from asyncore import close_all
 import tkinter as tk
 import tkinter.font as tkfont
+from turtle import color
 from cli import CLI
 from variables import black
+from ttkbootstrap import Style
 from tkinter import NW, BooleanVar, PhotoImage, Scrollbar, StringVar, ttk, filedialog, DISABLED, END, NORMAL, VERTICAL, NSEW, NS, EW, E
 
 class GUI(tk.Tk):
@@ -47,18 +50,22 @@ class GUI(tk.Tk):
         self.main_frame.rowconfigure(1, weight=2)
 
     def _configure_style(self):
-        self.font  = tkfont.Font(family="Calibri", size=16)
-        self.style = ttk.Style()
+        self.style = Style(theme="morph")
 
-        # BUTTONS STYLE
-        self.style.configure("TButton", font=self.font)
+        self.style.configure("TLabel", font=("Calibri", 14))
+        self.style.configure("TButton", font=("Calibri", 14))
+        self.style.configure("TEntry", font=("Calibri", 18))
+        self.style.configure("TCheckbutton", font=("Calibri", 14))
+
+    def _set_path_entry_value(self, entry_value):
+        self.path_entry.configure(state=NORMAL)
+        self.path.set(entry_value)
+        self.path_entry.configure(state=DISABLED)
 
     def _browse_folder(self):
         directory = filedialog.askdirectory()
         if directory:
-            self.path_entry.state = NORMAL
-            self.path.set(directory)
-            self.path_entry.state = DISABLED
+            self._set_path_entry_value(directory)
         
     def _start_get_meta(self):
         self.cli.start(self, "get_meta")
@@ -70,24 +77,24 @@ class GUI(tk.Tk):
         self.cli.start(self, "rename")
 
     def _create_widgets(self):
-        self._configure_style()
-
         # ROW 0 - PATH LABEL
         self.path_label = ttk.Label(self.main_frame, text="Music Files Location:")
         self.path_label.grid(row=0, column=0)
 
         # ROW 0 - BROWSE FOLDER BUTTON
-        self.folder_icon   = PhotoImage(file="icons/open-folder.png")
-        self.browse_button = ttk.Button(self.main_frame, image=self.folder_icon, command=self._browse_folder)
+        self.folder_icon   = PhotoImage(file="icons/open-folder_24px.png")
+        self.browse_button = ttk.Button(self.main_frame, image=self.folder_icon, padding="5 0", command=self._browse_folder)
         self.browse_button.grid(row=0, column=1, sticky=NW, padx="20 0")
 
         # ROW 0 - SHOW SELECTED PATH
-        self.path_entry = ttk.Entry(self.main_frame, textvariable=self.path, font=self.font, state=DISABLED)
+        self.path_entry = ttk.Entry(self.main_frame, textvariable=self.path, state=DISABLED)
         self.path_entry.grid(row=0, column=2, sticky=EW)
 
         # ROW 0 - SUBDIR CHECKBUTTON
         self.sub_dir_ckeckbutton = ttk.Checkbutton(self.main_frame, text="Include Subdirectories", name="sub_dir", variable=self.subdir, onvalue=1, offvalue=0, state=NORMAL)
-        self.sub_dir_ckeckbutton.grid(row=0, column=2, sticky=E)
+        self.sub_dir_ckeckbutton.grid(row=0, column=3, sticky=E, padx="20 0")
+
+        #=============================================================================#
 
         # ROW 1 - OUTPUT TEXT
         self.output_text = tk.Text(self.main_frame, state=DISABLED)
@@ -97,17 +104,23 @@ class GUI(tk.Tk):
         self.scroll = Scrollbar(self.main_frame, orient=VERTICAL, command=self.output_text.yview)
         self.scroll.grid(row=1, column=0, columnspan=4, sticky=(NS, E), pady=20)
 
+        #=============================================================================#
+
         # ROW 2 - BUTTON GET META
         self.get_meta_button = ttk.Button(self.main_frame, text="Get Metadata", command=self._start_get_meta)
-        self.get_meta_button.grid(row=2, column=0, columnspan=3, sticky=EW)
+        self.get_meta_button.grid(row=2, column=0, columnspan=4, sticky=EW)
+
+        #=============================================================================#
 
         # ROW 3 - BUTTON FIX META
         self.fix_meta_button = ttk.Button(self.main_frame, text="Fix Metadata", command=self._start_fix_meta)
-        self.fix_meta_button.grid(row=3, column=0, columnspan=3, sticky=EW, pady=20)
+        self.fix_meta_button.grid(row=3, column=0, columnspan=4, sticky=EW, pady=20)
+
+        #=============================================================================#
 
         # ROW 4 - BUTTON RENAME
         self.rename_button = ttk.Button(self.main_frame, text="Rename", command=self._start_rename)
-        self.rename_button.grid(row=4, column=0, columnspan=3, sticky=EW)
+        self.rename_button.grid(row=4, column=0, columnspan=4, sticky=EW)
 
     def get_subdir_value(self):
         return self.subdir.get()
