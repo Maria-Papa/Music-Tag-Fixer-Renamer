@@ -1,7 +1,4 @@
-from asyncore import close_all
 import tkinter as tk
-import tkinter.font as tkfont
-from turtle import color
 from cli import CLI
 from variables import black
 from ttkbootstrap import Style
@@ -54,7 +51,7 @@ class GUI(tk.Tk):
 
         self.style.configure("TLabel", font=("Calibri", 14))
         self.style.configure("TButton", font=("Calibri", 14))
-        self.style.configure("TEntry", font=("Calibri", 18))
+        self.style.configure("TEntry", font=("Calibri", 14)) # This doesn't work!
         self.style.configure("TCheckbutton", font=("Calibri", 14))
 
     def _set_path_entry_value(self, entry_value):
